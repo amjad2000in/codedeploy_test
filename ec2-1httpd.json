@@ -4,6 +4,113 @@
     "WebServer1":{
 
       "Type": "AWS::EC2::Instance",
+
+      "Metadata" : {
+
+          "Comment" : "Install a simple PHP application",
+          "AWS::CloudFormation::Init" : {
+          "config" : {
+            "Install" : {
+            "packages" : {
+              "yum" : {
+                "httpd"             : [],
+                "php"               : []
+              }
+            },
+
+
+            "files" : {
+
+              "/var/www/html/index.php" : {
+                "content" : { "Fn::Join" : ["", [
+                  "<?php\n",
+                  "echo '<h1>AWS CloudFormation sample PHP application</h1>';\n",
+                  "?>\n"
+                ]]},
+                "mode"    : "000644",
+                "owner"   : "apache",
+                "group"   : "apache"
+              },
+
+
+              "/etc/cfn/cfn-hup.conf" : {
+                "content" : { "Fn::Join" : ["", [
+                  "[main]\n",
+                  "stack=", { "Ref" : "AWS::StackId" }, "\n",
+                  "region=", { "Ref" : "AWS::Region" }, "\n"
+                ]]},
+                "mode"    : "000400",
+                "owner"   : "root",
+                "group"   : "root"
+              },
+
+              "/etc/cfn/hooks.d/cfn-auto-reloader.conf" : {
+                "content": { "Fn::Join" : ["", [
+                  "[cfn-auto-reloader-hook]\n",
+                  "triggers=post.update\n",
+                  "path=Resources.WebServer1.Metadata.AWS::CloudFormation::Init\n",
+                  "action=/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackId" }, " -r WebServer1 ",
+                                                   " --region     ", { "Ref" : "AWS::Region" }, "\n",
+                  "runas=root\n"
+                ]]}
+              }
+            },
+
+            "services" : {
+              "sysvinit" : {
+                "httpd"    : { "enabled" : "true", "ensureRunning" : "true" },
+                "sendmail" : { "enabled" : "false", "ensureRunning" : "false" }
+              }
+            }
+          }
+          }
+        }
+
+
+
+
+
+      },
+
+
+         "Properties":{
+         "ImageId" : "ami-00e782930f1c3dbc7",
+         "KeyName" : "amjad_crosstalk",
+         "InstanceType":"t2.micro",
+         "SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
+         "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash\n",
+          "yum update -y aws-cfn-bootstrap\n",
+
+          "# Helper function\n",
+          "function error_exit\n",
+          "{\n",
+          "  /opt/aws/bin/cfn-signal -e 1 -r \"$1\" '", { "Ref" : "WebServerWaitHandle" }, "'\n",
+          "  exit 1\n",
+          "}\n",
+
+          "# Install the simple web page\n",
+          "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackId" }, " -r WebServer1",
+          "         --region ", { "Ref" : "AWS::Region" }, " || error_exit 'Failed to run cfn-init'\n",
+
+          "# Start up the cfn-hup daemon to listen for changes to the Web Server metadata\n",
+          "/opt/aws/bin/cfn-hup || error_exit 'Failed to start cfn-hup'\n",
+
+          "# All done so signal success\n",
+          "/opt/aws/bin/cfn-signal -e 0 -r \"WebServer setup complete\" '", { "Ref" : "WebServerWaitHandle" }, "'\n"
+        ]]}}
+
+
+       }
+
+
+
+
+
+    },
+    "WebServer2":{
+
+      "Type": "AWS::EC2::Instance",
          "Properties":{
          "ImageId" : "ami-00e782930f1c3dbc7",
          "KeyName" : "amjad_crosstalk",
@@ -15,7 +122,7 @@
            "sudo su \n",
            "yum update -y \n",
            "yum install httpd -y \n",
-           "echo 'This is my Test Instance for the AWS CodePipeline-v2.5!' > /var/www/html/index.html \n",
+           "echo 'This is my WebServer2!' > /var/www/html/index.html \n",
            "service httpd start \n",
            "chkconfig httpd on \n"
             ] ] } }
@@ -43,11 +150,37 @@
           "CidrIp" : "0.0.0.0/0"
         }  ]
       }
-   }
+   },
+
+   "IPAddress" : {
+      "Type" : "AWS::EC2::EIP",
+      "Properties" : {
+      "InstanceId" : { "Ref" : "WebServer1" }
+    }
+  },
+
+    "WebServerWaitHandle" : {
+      "Type" : "AWS::CloudFormation::WaitConditionHandle"
+    },
+
+    "WebServerWaitCondition" : {
+      "Type" : "AWS::CloudFormation::WaitCondition",
+      "DependsOn" : "WebServer1",
+      "Properties" : {
+        "Handle" : {"Ref" : "WebServerWaitHandle"},
+        "Timeout" : "300"
+      }
+    }
+
+
  },
  "Outputs" : {
    "WebsiteURL" : {
       "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [        "WebServer1", "PublicDnsName" ]}]] },
+        "Description" : "URL for newly created LAMP stack"
+   },
+   "WebsiteURL" : {
+      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [        "WebServer2", "PublicDnsName" ]}]] },
         "Description" : "URL for newly created LAMP stack"
    }
  }
