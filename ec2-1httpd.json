@@ -122,7 +122,7 @@
            "sudo su \n",
            "yum update -y \n",
            "yum install httpd -y \n",
-           "echo 'This is my WebServer2!' > /var/www/html/index.html \n",
+           "echo 'This is my WebServer2.1!' > /var/www/html/index.html \n",
            "service httpd start \n",
            "chkconfig httpd on \n"
             ] ] } }
