@@ -15,7 +15,7 @@
            "sudo su \n",
            "yum update -y \n",
            "yum install httpd -y \n",
-           "echo 'This is my Test Instance for the AWS CodePipeline-v2.2!' > /var/www/html/index.html \n",
+           "echo 'This is my Test Instance for the AWS CodePipeline-v2.3!' > /var/www/html/index.html \n",
            "service httpd start \n",
            "chkconfig httpd on \n"
             ] ] } }
