@@ -3,7 +3,7 @@
     "DBName" : "TestWordPressDB",
     "DBPassword" : "TestDBRootPassword",
     "DBRootPassword" : "TestDBRootPassword",
-    "DBUser" : "TestDBuser",    
-    "KeyName" : "TestEC2KeyName"
+    "DBUser" : "TestDBuser",
+    "KeyName" : "amjad_crosstalk"
   }
 }

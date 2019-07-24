@@ -3,7 +3,7 @@
     "DBName" : "ProdWordPressDB",
     "DBPassword" : "ProdDBPassword",
     "DBRootPassword" : "ProdDBRootPassword",
-    "DBUser" : "ProdDBuser",    
-    "KeyName" : "ProdEC2KeyName"
+    "DBUser" : "ProdDBuser",
+    "KeyName" : "amjad_crosstalk"
   }
 }

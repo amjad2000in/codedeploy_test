@@ -108,7 +108,7 @@ Parameters:
     Description: The IP address range that can be used to SSH to the EC2 instances
     MaxLength: '18'
     MinLength: '9'
-    Type: String  
+    Type: String
 Mappings:
   AWSInstanceType2Arch:
     c1.medium:
@@ -390,7 +390,7 @@ Resources:
               test: !Sub |
                 $(mysql ${DBName} -u root --password='${DBRootPassword}' >/dev/null 2>&1 </dev/null); (( $? != 0 ))
             02_create_database:
-              command: !Sub |  
+              command: !Sub |
                 mysql -u root --password='${DBRootPassword}' < /tmp/setup.mysql
               test: !Sub |
                 $(mysql ${DBName} -u root --password='${DBRootPassword}' >/dev/null 2>&1 </dev/null); (( $? !=0))
@@ -432,7 +432,7 @@ Resources:
                 cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php
                 sed -i "s/'database_name_here'/'${DBName}'/g" wp-config.php
                 sed -i "s/'username_here'/'${DBUser}'/g" wp-config.php
-                sed -i "s/'password_here'/'${DBPassword}'/g" wp-config.php                                    
+                sed -i "s/'password_here'/'${DBPassword}'/g" wp-config.php
               group: root
               mode: '000500'
               owner: root
@@ -440,7 +440,7 @@ Resources:
               content: !Sub |
                 CREATE DATABASE ${DBName};
                 CREATE USER '${DBUser}'@'localhost' IDENTIFIED BY '${DBPassword}';
-                GRANT ALL ON ${DBName}.* TO '${DBUser}'@'localhost'; 
+                GRANT ALL ON ${DBName}.* TO '${DBUser}'@'localhost';
                 FLUSH PRIVILEGES;
               group: root
               mode: '000400'
@@ -465,7 +465,7 @@ Resources:
           sources:
             /var/www/html: http://wordpress.org/latest.tar.gz
     Properties:
-      ImageId: !FindInMap [AWSRegionArch2AMI, !Ref 'AWS::Region', !FindInMap [AWSInstanceType2Arch, !Ref InstanceType, Arch]]      
+      ImageId: !FindInMap [AWSRegionArch2AMI, !Ref 'AWS::Region', !FindInMap [AWSInstanceType2Arch, !Ref InstanceType, Arch]]
       InstanceType:
         Ref: InstanceType
       KeyName:
