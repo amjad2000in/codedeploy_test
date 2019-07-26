@@ -35,7 +35,7 @@
               "/var/www/html/index.php" : {
                 "content" : { "Fn::Join" : ["", [
                   "<?php\n",
-                  "echo '<h1>Application 1-v2</h1>';\n",
+                  "echo '<h1>Application 1-v3</h1>';\n",
                   "?>\n"
                 ]]},
                 "mode"    : "000644",
