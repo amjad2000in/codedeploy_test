@@ -36,7 +36,7 @@
                 "content" : { "Fn::Join" : ["", [
                   "<?php\n",
                   "echo '<h1>Application 1-v3</h1>';\n",
-                  "echo 'Pileline testing';\n",
+                  "echo 'Pileline testing-v2';\n",
                   "?>\n"
                 ]]},
                 "mode"    : "000644",
