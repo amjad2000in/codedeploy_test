@@ -49,6 +49,7 @@
                   "[main]\n",
                   "stack=", { "Ref" : "AWS::StackId" }, "\n",
                   "region=", { "Ref" : "AWS::Region" }, "\n"
+
                 ]]},
                 "mode"    : "000400",
                 "owner"   : "root",
@@ -59,14 +60,15 @@
                 "content": { "Fn::Join" : ["", [
                   "[cfn-auto-reloader-hook]\n",
                   "triggers=post.update\n",
-                  "path=Resources.WebServerInstance.Metadata.AWS::CloudFormation::Init\n",
+                  "path=Resources.WebServer1.Metadata.AWS::CloudFormation::Init\n",
                   "action=/opt/aws/bin/cfn-init -v ",
                   "         --stack ", { "Ref" : "AWS::StackName" },
-                  "         --resource WebServerInstance ",
+                  "         --resource WebServer1 ",
                   "         --configsets InstallAndRun ",
                   "         --region ", { "Ref" : "AWS::Region" }, "\n",
                   "runas=root\n"
                 ]]}
+
               }
 
             },
@@ -116,6 +118,9 @@
           "         --resource WebServer1 ",
           "         --configsets InstallAndRun ",
           "         --region ", { "Ref" : "AWS::Region" }, "\n",
+
+          "# Start up the cfn-hup daemon to listen for changes to the Web Server metadata\n",
+          "/opt/aws/bin/cfn-hup || error_exit 'Failed to start cfn-hup'\n"
 
 
         ]]}}
